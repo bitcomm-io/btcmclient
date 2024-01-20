@@ -137,6 +137,7 @@ name = "btcmbase"
 version = "0.1.0"
 dependencies = [
  "bitflags 2.4.1",
+ "bytes",
  "getset",
  "rand 0.8.5",
  "serde",
@@ -149,8 +150,6 @@ dependencies = [
  "btcmbase",
  "bytes",
  "s2n-quic",
- "serde",
- "serde_bytes",
  "tokio",
 ]
 
@@ -1121,15 +1120,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b114498256798c94a0689e1a15fec6005dee8ac1f41de56404b67afc2a4b773"
 dependencies = [
  "serde_derive",
-]
-
-[[package]]
-name = "serde_bytes"
-version = "0.11.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b8497c313fd43ab992087548117643f6fcd935cbf36f176ffda0aacf9591734"
-dependencies = [
- "serde",
 ]
 
 [[package]]

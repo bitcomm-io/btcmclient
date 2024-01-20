@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
-use btcmbase::datagram::CommandDataGram;
-use btcmbase::datagram::MessageDataGram;
+use btcmbase::{datagram::{CommandDataGram, BitCommand}, client::{ClientID, ClientPlanet, ClientType}};
+// use btcmbase::datagram::MessageDataGram;
 use s2n_quic::{client::Connect, Client};
 use tokio::io::AsyncWriteExt;
 use std::{error::Error, net::SocketAddr};
@@ -26,6 +26,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .start()?;  // 启动 Client
 
     // 定义 Socket 地址，解析字符串并返回 SocketAddr 类型
+    // let addr: SocketAddr = "192.168.0.106:4433".parse()?;
     let addr: SocketAddr = "127.0.0.1:4433".parse()?;
     // 创建 Connect 实例，指定服务器地址和名称
     let connect = Connect::new(addr).with_server_name("localhost");
@@ -48,18 +49,35 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // let _ = tokio::io::copy(&mut receive_stream, &mut stdout).await;
     });
     
-    let mut data_gram_buf = MessageDataGram::create_gram_buf(1024);
-    let message: &mut MessageDataGram = MessageDataGram::create_message_data_gram_by_mut_vec8(&mut data_gram_buf);
-    eprintln!("Stream opened data    from {:?}", message);
+    // let mut data_gram_buf = MessageDataGram::create_gram_buf(1024);
+    // let message: &mut MessageDataGram = MessageDataGram::create_message_data_gram_by_mut_vec8(&mut data_gram_buf);
+    // eprintln!("Stream opened data    from {:?}", message);
+    // let array = data_gram_buf.as_slice();
+    // // eprintln!("Stream opened from {:?}", array);
+    // send_stream.write_all(array).await?;
+    // send_stream.flush().await?;
+    let deviceid : u64 = 0x48dc734508da36bc;
+    let clientid :ClientID = ClientID::new(ClientPlanet::PLANET_EARTH, 0x000099);
+    let mut data_gram_buf = CommandDataGram::create_gram_buf(0);
+    let command = CommandDataGram::create_command_data_gram_by_mut_u8(data_gram_buf.as_mut_slice());
+    command.set_deviceid(deviceid); // 设置设备id
+    command.set_sender(clientid);   // sender -> ClientID
+    command.set_sendertype(ClientType::CLIENT_PEOPLE); // Client_People
+    command.set_command(BitCommand::LOGIN_COMMAND);    // 登录
+    eprintln!("Stream opened data    from {:?}", command);
     let array = data_gram_buf.as_slice();
-    // eprintln!("Stream opened from {:?}", array);
     send_stream.write_all(array).await?;
     send_stream.flush().await?;
 
-    let mut data_gram_buf = CommandDataGram::create_gram_buf();
+
+    let mut data_gram_buf = CommandDataGram::create_gram_buf(0);
     let command = CommandDataGram::create_command_data_gram_by_mut_u8(data_gram_buf.as_mut_slice());
+    command.set_deviceid(deviceid); // 设置设备id
+    command.set_sender(clientid);   // sender -> ClientID
+    command.set_sendertype(ClientType::CLIENT_PEOPLE); // Client_People
+    command.set_command(BitCommand::LOGOUT_COMMAND);    // 登出
     eprintln!("Stream opened data    from {:?}", command);
-    let array = data_gram_buf.as_slice();
+    let array = data_gram_buf.as_slice(); 
     send_stream.write_all(array).await?;
     send_stream.flush().await?;
 
