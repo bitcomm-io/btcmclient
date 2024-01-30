@@ -3,9 +3,11 @@
 
 
 use btcmbase::{datagram::{CommandDataGram, BitCommand}, client::{ClientID, ClientPlanet, ClientType}};
+use btcmtools::command;
+use bytes::Bytes;
 // use btcmbase::datagram::MessageDataGram;
 use s2n_quic::{client::Connect, Client};
-use tokio::io::AsyncWriteExt;
+use tokio::io::{AsyncWriteExt, BufReader, AsyncBufReadExt};
 use std::{error::Error, net::SocketAddr};
 
 /// 注意: 该证书仅供演示目的使用！
@@ -83,8 +85,45 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // 新建一个CommandDataGram   
     // 复制标准输入的数据并发送到服务器
-    let mut stdin = tokio::io::stdin();
-    tokio::io::copy(&mut stdin, &mut send_stream).await?;
+    // let mut stdin = tokio::io::stdin();
+    // tokio::io::copy(&mut stdin, &mut send_stream).await?;
+
+    let stdin = tokio::io::stdin();
+    let mut reader = BufReader::new(stdin);
+
+    // 异步读取一行字符串
+    println!("Type something and press Enter:");
+    let mut input = String::new();
+    while let Ok(_) = reader.read_line(&mut input).await {
+        // println!("You typed: {}", input);
+
+        // let cmd = command::parse_command(&input);
+        if let Ok((_,cmd)) =  command::parse_command(&input) {
+            match cmd {
+                command::Command::Login(login) => {
+                    eprintln!("login =  {:?}", login);
+                    // login.user();login.pass();
+                }
+                command::Command::Send(send) => {
+                    eprintln!("send =  {:?}", send);
+                    // send.text();send.user();
+                }
+                command::Command::Logout(user) => {
+                    eprintln!("logout =  {:?}", user);
+                }
+                command::Command::Exit => {
+                    break;
+                }
+                command::Command::Quit => {
+                    break;
+                }
+            }
+            // println!("可以解析: {}", input);
+            // println!("You command: {}", cmd);
+        }
+        send_stream.send(Bytes::from(input.clone())).await.expect("error!");
+        input.clear();
+    }
 
     Ok(())  // 成功返回 Ok(())
 }

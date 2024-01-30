@@ -148,9 +148,19 @@ name = "btcmclient"
 version = "0.1.0"
 dependencies = [
  "btcmbase",
+ "btcmtools",
  "bytes",
  "s2n-quic",
  "tokio",
+]
+
+[[package]]
+name = "btcmtools"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "getset",
+ "nom",
 ]
 
 [[package]]
