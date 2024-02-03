@@ -28,7 +28,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .start()?;  // 启动 Client
 
     // 定义 Socket 地址，解析字符串并返回 SocketAddr 类型
+<<<<<<< Updated upstream
     let addr: SocketAddr = "192.168.3.6:4433".parse()?;
+=======
+    let addr: SocketAddr = "192.168.0.103:4433".parse()?;
+>>>>>>> Stashed changes
     // let addr: SocketAddr = "127.0.0.1:4433".parse()?;
     // 创建 Connect 实例，指定服务器地址和名称
     let connect = Connect::new(addr).with_server_name("localhost");
