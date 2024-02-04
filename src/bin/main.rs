@@ -28,8 +28,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // 定义 Socket 地址，解析字符串并返回 SocketAddr 类型
     // let addr: SocketAddr = "192.168.3.6:4433".parse()?;
-    // let addr: SocketAddr = "127.0.0.1:4433".parse()?;
-    let addr: SocketAddr = "117.78.10.241:4433".parse()?;
+    let addr: SocketAddr = "127.0.0.1:9563".parse()?;
+    // let addr: SocketAddr = "117.78.10.241:4433".parse()?;
     // 创建 Connect 实例，指定服务器地址和名称
     let connect = Connect::new(addr).with_server_name("localhost");
     // 连接服务器，获取 Connection 实例
@@ -58,7 +58,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // // eprintln!("Stream opened from {:?}", array);
     // send_stream.write_all(array).await?;
     // send_stream.flush().await?;
-    let deviceid: u64 = 0x48dc734508da36bc;
+    let deviceid: u32 = 0x48dc7345;
     let clientid: ClientID = ClientID::new(ClientPlanet::PLANET_EARTH, 0x000099);
     let mut data_gram_buf = CommandDataGram::create_gram_buf(0);
     let command = CommandDataGram::create_command_data_gram_by_mut_u8(data_gram_buf.as_mut_slice());
