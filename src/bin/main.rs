@@ -6,6 +6,7 @@ use btcmbase::{
     datagram::{BitCommand, CommandDataGram, MessageDataGram},
 };
 use btcmtools::command::{self, TextToUser, UserPass};
+use bytes::Bytes;
 // use bytes::Bytes;
 // use btcmbase::datagram::MessageDataGram;
 use s2n_quic::{client::Connect, stream::SendStream, Client};
@@ -100,14 +101,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
             }
             // println!("可以解析: {}", input);
             // println!("You command: {}", cmd);
-            input.clear();
         } else {
-            input.clear();
+        send_stream
+            .send(Bytes::from(input.clone()))
+            .await
+            .expect("error!");
         }
-        // send_stream
-        //     .send(Bytes::from(input.clone()))
-        //     .await
-        //     .expect("error!");
+        input.clear();
     }
     Ok(()) // 成功返回 Ok(())
 }
