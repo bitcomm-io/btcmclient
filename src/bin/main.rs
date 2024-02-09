@@ -16,7 +16,7 @@ use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 /// 注意: 该证书仅供演示目的使用！
 // 静态字符串，包含 PEM 格式的证书内容
 pub static CERT_PEM: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/../certs/cert.pem"));
-static DEVICE_ID: u32 = 0x48dc7345;
+static DEVICE_ID: u32 = 0x48dc7346;
 // 异步主函数，返回 Result 类型，其中错误类型为实现 Error trait 的任意类型的 trait 对象
 #[tokio::main]
 // #[repr(align)]
