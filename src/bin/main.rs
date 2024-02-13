@@ -123,7 +123,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         let res = inputext(ss).await;
         match res {
             Ok(_) => {
-
+                break;
             }
             Err(err) => {
                 eprintln!("quic error =  {:?}", err);
