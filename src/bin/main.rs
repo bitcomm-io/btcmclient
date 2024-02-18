@@ -5,7 +5,7 @@ use btcmbase::{
     client::{ ClientID, ClientPlanet, ClientType },
     datagram::{ BitCommand, CommandDataGram, MessageDataGram },
 };
-use btcmtools::command::{ self, TextToUser, UserPass };
+use btcmtools::imcmd::{self, TextToUser, UserPass };
 use bytes::Bytes;
 // use bytes::Bytes;
 // use btcmbase::datagram::MessageDataGram;
@@ -62,30 +62,30 @@ async fn inputext(stream: Arc<Mutex<SendStream>>) -> Result<Option<()>, Box<dyn 
             input.pop();
         }
         // input = input.trim_right_matches('\n').to_string();
-        if let Ok((_, cmd)) = command::parse_command(&input) {
+        if let Ok((_, cmd)) = imcmd::parse_command(&input) {
             // input.clear();
             match cmd {
-                command::Command::Login(login) => {
+                imcmd::IMCommand::Login(login) => {
                     eprintln!("login =  {:?}", login);
                     login_userid = login_imserver(&login, &mut send_stream).await.unwrap();
                     // continue;
                     // login.user();login.pass();
                 }
-                command::Command::Send(send) => {
+                imcmd::IMCommand::Send(send) => {
                     eprintln!("send =  {:?}", send);
                     send_text2user(login_userid, &send, &mut send_stream).await?;
                     // continue;
                     // send.text();send.user();
                 }
-                command::Command::Logout(user) => {
+                imcmd::IMCommand::Logout(user) => {
                     eprintln!("logout =  {:?}", user);
                     logout_imserver(&user, &mut send_stream).await?;
                     // continue;
                 }
-                command::Command::Exit => {
+                imcmd::IMCommand::Exit => {
                     break;
                 }
-                command::Command::Quit => {
+                imcmd::IMCommand::Quit => {
                     break;
                 }
             }
