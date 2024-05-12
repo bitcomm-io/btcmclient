@@ -2,16 +2,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use btcmbase::{
-    client::{ ClientID, ClientPlanet, ClientType },
-    datagram::{ BitCommand, CommandDataGram, MessageDataGram },
+    client::{ClientID, ClientPlanet, ClientType},
+    datagram::{BitCommand, CommandDataGram, MessageDataGram},
 };
-use btcmtools::imcmd::{ self, TextToUser, UserPass };
+use btcmtools::imcmd::{self, TextToUser, UserPass};
 use bytes::Bytes;
 // use bytes::Bytes;
 // use btcmbase::datagram::MessageDataGram;
-use s2n_quic::{ client::Connect, stream::{ ReceiveStream, SendStream }, Client, Connection };
-use std::{ error::Error, net::SocketAddr, sync::Arc, time::Duration };
-use tokio::{ io::{ AsyncBufReadExt, AsyncWriteExt, BufReader }, sync::Mutex };
+use s2n_quic::{
+    client::Connect,
+    stream::{ReceiveStream, SendStream},
+    Client, Connection,
+};
+use std::{error::Error, net::SocketAddr, sync::Arc, time::Duration};
+use tokio::{
+    io::{AsyncBufReadExt, AsyncWriteExt, BufReader},
+    sync::Mutex,
+};
 
 /// 注意: 该证书仅供演示目的使用！
 // 静态字符串，包含 PEM 格式的证书内容
@@ -20,14 +27,15 @@ static DEVICE_ID: u32 = 0x48dc7346;
 
 async fn get_quic_connect() -> Result<Option<Connection>, Box<dyn Error>> {
     let client = Client::builder()
-        .with_tls(CERT_PEM)
-        ? // 使用指定的 PEM 证书配置 TLS
-        .with_io("0.0.0.0:0")
-        ? // 指定 I/O 地址
+        .with_tls(CERT_PEM)?
+        // 使用指定的 PEM 证书配置 TLS
+        .with_io("0.0.0.0:0")?
+        // 指定 I/O 地址
         .start()?; // 启动 Client
-    // 定义 Socket 地址，解析字符串并返回 SocketAddr 类型
-    // let addr: SocketAddr = "192.168.3.6:4433".parse()?;
+                   // 定义 Socket 地址，解析字符串并返回 SocketAddr 类型
+                   // let addr: SocketAddr = "192.168.3.6:4433".parse()?;
     let addr: SocketAddr = "127.0.0.1:9563".parse()?;
+
     // let addr: SocketAddr = "117.78.10.241:9563".parse()?;
     // 创建 Connect 实例，指定服务器地址和名称
     let connect = Connect::new(addr).with_server_name("localhost");
@@ -136,7 +144,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 async fn login_imserver(
     user: &UserPass,
-    send_stream: &mut SendStream
+    send_stream: &mut SendStream,
 ) -> Result<u32, Box<dyn Error>> {
     // let deviceid: u32 = 0x48dc7345;
     let login_userid = user.user().parse().unwrap();
@@ -157,7 +165,7 @@ async fn login_imserver(
 async fn send_text2user(
     loginuserid: u32,
     text: &TextToUser,
-    send_stream: &mut SendStream
+    send_stream: &mut SendStream,
 ) -> Result<(), Box<dyn Error>> {
     let mut message_buf = MessageDataGram::create_gram_databuf(text.text().as_bytes());
     let message_gram = MessageDataGram::create_message_data_gram_by_mut_vec8(&mut message_buf);
@@ -180,7 +188,7 @@ async fn send_text2user(
 
 async fn logout_imserver(
     user: &String,
-    send_stream: &mut SendStream
+    send_stream: &mut SendStream,
 ) -> Result<(), Box<dyn Error>> {
     // let deviceid: u32 = 0x48dc7345;
     let login_userid = user.parse().unwrap();
